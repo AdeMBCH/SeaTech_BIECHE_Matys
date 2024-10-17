@@ -3,9 +3,6 @@
 
 
 
-
-
-
 void InitADC1(void);
 void ADC1StartConversionSequence();
 unsigned int * ADCGetResult(void);
