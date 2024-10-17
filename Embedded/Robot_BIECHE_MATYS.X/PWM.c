@@ -5,8 +5,8 @@
 
 void InitPWM(void) {
     PTCON2bits.PCLKDIV = 0b000; //Divide by 1
-    PTPER = 100 * PWMPER; //ÈPriode en pourcentage
-    //ÈRglage PWM moteur 1 sur hacheur 1
+    PTPER = 100 * PWMPER; //PÈriode en pourcentage
+    //RÈglage PWM moteur 1 sur hacheur 1
     IOCON1bits.PMOD = 0b11; //PWM I/O pin pair is in the True Independent Output mode
     IOCON1bits.PENL = 1;
     IOCON1bits.PENH = 1;
