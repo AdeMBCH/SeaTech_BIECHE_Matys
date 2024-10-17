@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "IO.h"
 #include "PWM.h"
+#include "ADC.h"
 
 //Initialisation d?un timer 32 bits
 void InitTimer23(void) {
@@ -64,7 +65,8 @@ T1CONbits.TON = 1; // Enable Timer
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
 {
     IFS0bits.T1IF = 0;
-    PWMUpdateSpeed();
+    //PWMUpdateSpeed();
+    ADC1StartConversionSequence();
 }
 unsigned char toggle=0;
 //Interruption pour moteurs
