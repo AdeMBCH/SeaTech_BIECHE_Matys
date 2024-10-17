@@ -10,6 +10,7 @@
       <itemPath>robot.h</itemPath>
       <itemPath>Toolbox.h</itemPath>
       <itemPath>PWM.h</itemPath>
+      <itemPath>ADC.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

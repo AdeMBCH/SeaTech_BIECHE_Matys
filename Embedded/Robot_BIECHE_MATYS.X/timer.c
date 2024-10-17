@@ -68,15 +68,15 @@ void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
 }
 unsigned char toggle=0;
 //Interruption pour moteurs
-/*void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
+void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
     IFS0bits.T3IF = 0; // Clear Timer3 Interrupt Flag
     if(toggle == 0){
-        PWMSetSpeed(0, MOTEUR_DROIT);
-        PWMSetSpeed(0, MOTEUR_GAUCHE);
+        PWMSetSpeedConsigne(20,MOTEUR_GAUCHE);
+        PWMSetSpeedConsigne(20,MOTEUR_DROIT);
         toggle = 1;
     }else{
-        PWMSetSpeed(0, MOTEUR_DROIT);
-        PWMSetSpeed(0, MOTEUR_GAUCHE);
+        PWMSetSpeedConsigne(-20,MOTEUR_GAUCHE);
+        PWMSetSpeedConsigne(-20,MOTEUR_DROIT);
         toggle = 0;
     }
-}*/
+}

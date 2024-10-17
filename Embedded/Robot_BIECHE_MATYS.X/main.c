@@ -15,14 +15,14 @@ int main(void) {
     //Initialisation des Timers
     /****************************************************************************************************/
     InitTimer1();
-    //InitTimer23();
+    InitTimer23();
     /***************************************************************************************************/
     //Initialisation des moteurs
     /****************************************************************************************************/
     InitPWM();
     //PWMSetSpeed(0,MOTEUR_DROIT);
-    //PWMSetSpeedConsigne(20,MOTEUR_GAUCHE);
-    //PWMSetSpeedConsigne(20,MOTEUR_DROIT);
+    PWMSetSpeedConsigne(0,MOTEUR_GAUCHE);
+    PWMSetSpeedConsigne(0,MOTEUR_DROIT);
     /****************************************************************************************************/
     // Configuration des entrées sorties
     /****************************************************************************************************/
