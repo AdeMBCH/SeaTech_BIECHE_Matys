@@ -30,6 +30,7 @@
       <itemPath>robot.c</itemPath>
       <itemPath>Toolbox.c</itemPath>
       <itemPath>PWM.c</itemPath>
+      <itemPath>ADC.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

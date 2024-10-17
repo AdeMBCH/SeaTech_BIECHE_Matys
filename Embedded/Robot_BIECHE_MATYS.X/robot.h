@@ -1,8 +1,6 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#define ACCELERATION 5
-
 typedef struct robotStateBITS {
     union {
         struct {

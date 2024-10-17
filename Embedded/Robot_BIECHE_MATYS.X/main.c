@@ -21,7 +21,7 @@ int main(void) {
     /****************************************************************************************************/
     InitPWM();
     //PWMSetSpeed(0,MOTEUR_DROIT);
-    PWMSetSpeedConsigne(20,MOTEUR_GAUCHE);
+    //PWMSetSpeedConsigne(20,MOTEUR_GAUCHE);
     //PWMSetSpeedConsigne(20,MOTEUR_DROIT);
     /****************************************************************************************************/
     // Configuration des entrées sorties
