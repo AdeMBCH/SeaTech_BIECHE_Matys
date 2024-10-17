@@ -6,6 +6,8 @@ unsigned char ADCConversionFinishedFlag;
 /****************************************************************************************************/
 // Configuration ADC
 /****************************************************************************************************/
+//manuel de reférences
+/*https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/ReferenceManuals/70621c.pdf*/
 void InitADC1(void)
 {
     //cf. ADC Reference Manual page 47

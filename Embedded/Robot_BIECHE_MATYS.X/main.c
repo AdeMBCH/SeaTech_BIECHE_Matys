@@ -59,7 +59,7 @@ int main(void) {
 
             // Retrieve the conversion results
             unsigned int *result = ADCGetResult();
-            ADCValue0 = result[0];
+            ADCValue0 = result [0];
             ADCValue1 = result[1];
             ADCValue2 = result[2];
         }        
