@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
-#define FREQUENCE_TIMER1 50
+#define FREQUENCE_TIMER1 500
 #define FREQUENCE_TIMER4 1000
 #define FCY 60000000
 
