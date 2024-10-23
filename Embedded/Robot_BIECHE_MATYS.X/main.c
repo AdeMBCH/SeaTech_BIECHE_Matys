@@ -6,12 +6,17 @@
 #include "timer.h"
 #include "PWM.h"
 #include "ADC.h"
+#include "robot.h"
 
 int main(void) {
     /***************************************************************************************************/
     //Initialisation de l?oscillateur
     /****************************************************************************************************/
     InitOscillator();
+    /****************************************************************************************************/
+    // Configuration des entrées sorties
+    /****************************************************************************************************/
+    InitIO();
     /***************************************************************************************************/
     //Initialisation de l'ADC
     /****************************************************************************************************/
@@ -20,16 +25,13 @@ int main(void) {
     //Initialisation des Timers
     /****************************************************************************************************/
     InitTimer1();
-    InitTimer23();
+    InitTimer4();
+//    InitTimer23();
     /***************************************************************************************************/
     //Initialisation des moteurs
     /****************************************************************************************************/
     InitPWM();
     //PWMSetSpeed(0,MOTEUR_DROIT);
-    /****************************************************************************************************/
-    // Configuration des entrées sorties
-    /****************************************************************************************************/
-    InitIO();
 
     LED_BLANCHE_1 = 1;
     LED_BLEUE_1 = 1;
@@ -49,20 +51,22 @@ int main(void) {
     /****************************************************************************************************/
     while (1) {
         /*LED_BLANCHE_1 = !LED_BLANCHE_1;
-        LED_BLEUE_1 = !LED_BLEUE_1;*/
-        
+       LED_BLEUE_1 = !LED_BLEUE_1;*/
         
         // ADC conversion est-il fini ?
-        if (ADCIsConversionFinished()) {
+        if (ADCIsConversionFinished()==1) {
             // Nettoyage du flag
             ADCClearConversionFinishedFlag();
 
             // Retrieve the conversion results
-            unsigned int *result = ADCGetResult();
-            ADCValue0 = result [0];
-            ADCValue1 = result[1];
-            ADCValue2 = result[2];
-        }        
-        
-    } // fin main
+            unsigned int * result = ADCGetResult();
+            float volts = ((float) result [0])* 3.3 / 4096;
+            robotState.distanceTelemetreGauche = 34 / volts - 5;
+            volts = ((float) result [1])* 3.3 / 4096;
+            robotState.distanceTelemetreCentre = 34 / volts - 5;
+            volts = ((float) result [2])* 3.3 / 4096;
+            robotState.distanceTelemetreDroit = 34 / volts - 5;
+
+        } 
+    }
 }

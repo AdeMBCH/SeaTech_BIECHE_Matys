@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/main.c</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/timer.c</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/ADC.h</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/timer.h</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/ADC.c</file>
         </group>
