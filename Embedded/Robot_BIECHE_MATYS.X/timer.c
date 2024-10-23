@@ -5,8 +5,7 @@
 #include "ADC.h"
 #include "main.h"
 
-
-extern unsigned long timestamp;
+unsigned long timestamp;
 
 //Initialisation d?un timer 32 bits
 void InitTimer23(void) {
@@ -82,9 +81,9 @@ void InitTimer4(void) {
 void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void)
 {
     IFS0bits.T1IF = 0;
-    //PWMUpdateSpeed();
-    //ADC1StartConversionSequence();
-    LED_BLEUE_2 = !LED_BLEUE_2;
+    PWMUpdateSpeed();
+    ADC1StartConversionSequence();
+    //LED_BLEUE_2 = !LED_BLEUE_2;
 }
 unsigned char toggle=0;
 //Interruption pour moteurs
@@ -103,8 +102,11 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void) {
     IFS1bits.T4IF = 0;
-    LED_BLEUE_1 = !LED_BLEUE_1;   
+    //LED_BLEUE_1 = !LED_BLEUE_1;
+    timestamp+=1;
+    OperatingSystemLoop();
 }
+
 void SetFreqTimer1(float freq)
 {
     T1CONbits.TCKPS = 0b00; //00 = 1:1 prescaler value
@@ -143,4 +145,8 @@ void SetFreqTimer4(float freq)
                 PR1 = (int)(FCY / freq / 8);
     }else
         PR1 = (int)(FCY / freq);
+}
+
+void cleartimestamp(void){
+    timestamp=0;
 }
