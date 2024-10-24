@@ -15,7 +15,7 @@
  unsigned char stateRobot;
 
  double vitesse=30; //40 vitesse de fou
- double vitesse2=12;
+ double vitesse2=0;
  
  unsigned char stateRobot;
 
