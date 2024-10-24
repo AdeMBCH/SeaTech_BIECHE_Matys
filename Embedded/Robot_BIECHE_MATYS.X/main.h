@@ -5,6 +5,8 @@
 #define FREQUENCE_TIMER4 1000
 #define FCY 60000000
 
+#define SEUIL_OBSTACLE 45
+
 #define STATE_ATTENTE 0
 #define STATE_ATTENTE_EN_COURS 1
 #define STATE_AVANCE 2
@@ -31,6 +33,7 @@
 #define OBSTACLE_EN_FACE 3
 #define OBSTACLE_A_DROITE_PLUS 4
 #define OBSTACLE_A_GAUCHE_PLUS 5
+#define PARTOUT 6
 
 void OperatingSystemLoop(void);
 void SetNextRobotStateInAutomaticMode();

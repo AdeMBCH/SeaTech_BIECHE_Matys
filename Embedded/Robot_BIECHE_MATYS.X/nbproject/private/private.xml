@@ -6,8 +6,13 @@
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/main.c</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/timer.c</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/ADC.h</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/robot.h</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/timer.h</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/IO.c</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/main.h</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/PWM.h</file>
             <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/ADC.c</file>
+            <file>file:/C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/PWM.c</file>
         </group>
     </open-files>
 </project-private>
