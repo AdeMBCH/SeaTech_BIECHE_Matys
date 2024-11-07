@@ -14,7 +14,7 @@
     /****************************************************************************************************/
  unsigned char stateRobot;
 
- double vitesse=30; //40 vitesse de fou
+ double vitesse=40; //40 vitesse de fou
  double vitesse2=0;
  
  unsigned char stateRobot;
@@ -110,58 +110,149 @@ unsigned char nextStateRobot = 0;
 
 void SetNextRobotStateInAutomaticMode() {
     unsigned char positionObstacle = PAS_D_OBSTACLE;
-    //?Dtermination de la position des obstacles en fonction des ???tlmtres
-    if (robotState.distanceTelemetreDroit < SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreCentre > SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreGauche > SEUIL_OBSTACLE) //Obstacle ?droite
-        positionObstacle = OBSTACLE_A_DROITE;
-    
-    
-    else if (robotState.distanceTelemetreDroit > SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreCentre > SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreGauche < SEUIL_OBSTACLE 
-            ) //Obstacle ?gauche
-        positionObstacle = OBSTACLE_A_GAUCHE;
-    
-    
-    else if (robotState.distanceTelemetreCentre < SEUIL_OBSTACLE) //Obstacle en face
-        positionObstacle = OBSTACLE_EN_FACE;
-    
-    else if (robotState.distanceTelemetreDroit > SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreCentre > SEUIL_OBSTACLE &&
-            robotState.distanceTelemetreGauche > SEUIL_OBSTACLE
-            ) //pas d?obstacle
-        positionObstacle = PAS_D_OBSTACLE;
-    
-    else if (robotState.distanceTelemetreDroit < SEUIL_OBSTACLE &&
-            robotState.distanceTelemetrePlusDroit < SEUIL_OBSTACLE)
-        positionObstacle = OBSTACLE_A_DROITE_PLUS;
-    
-    else if (robotState.distanceTelemetreGauche < SEUIL_OBSTACLE &&
-            robotState.distanceTelemetrePlusGauche < SEUIL_OBSTACLE)
-        positionObstacle = OBSTACLE_A_GAUCHE_PLUS;
-    else
-        positionObstacle=PARTOUT;
-      
-    
-   
-    //?Dtermination de l??tat ?venir du robot
-    if (positionObstacle == PAS_D_OBSTACLE)
-        nextStateRobot = STATE_AVANCE;
-    else if (positionObstacle == OBSTACLE_A_DROITE)
-        nextStateRobot = STATE_TOURNE_GAUCHE;
-    else if (positionObstacle == OBSTACLE_A_GAUCHE)
-        nextStateRobot = STATE_TOURNE_DROITE;
-    else if (positionObstacle == OBSTACLE_EN_FACE)
-        nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE;
-    else if (positionObstacle == OBSTACLE_A_DROITE_PLUS )
-        nextStateRobot = STATE_TOURNE_DROITE_PLUS;
-    else if (positionObstacle == OBSTACLE_A_GAUCHE_PLUS )
-        nextStateRobot = STATE_TOURNE_GAUCHE_PLUS;
-    else
-        nextStateRobot = STATE_RECULE;
-    //Si l?on n?est pas dans la transition de l??tape en cours
-    if (nextStateRobot != stateRobot - 1)
+    unsigned char interferometres = 0;
+
+    // Lecture des valeurs des interferomètres
+    // Remplacez ces lignes par vos fonctions de lecture réelles
+    interferometres = (robotState.distanceTelemetrePlusGauche < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_GAUCHE_PLUS : interferometres;
+    interferometres = (robotState.distanceTelemetreGauche < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_GAUCHE : interferometres;
+    interferometres = (robotState.distanceTelemetreCentre < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_CENTRE : interferometres;
+    interferometres = (robotState.distanceTelemetreDroit < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_DROITE : interferometres;
+    interferometres = (robotState.distanceTelemetrePlusDroit < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_DROITE_PLUS : interferometres;
+
+    // Détermination de la position des obstacles en fonction des interferomètres
+    switch (interferometres) {
+        case 0x00: // Aucun obstacle détecté
+            positionObstacle = PAS_D_OBSTACLE;
+            break;
+        case 0x01: // Obstacle à gauche plus
+            positionObstacle = OBSTACLE_A_GAUCHE_PLUS;
+            break;
+        case 0x02: // Obstacle à gauche
+            positionObstacle = OBSTACLE_A_GAUCHE;
+            break;
+        case 0x03: // Obstacles à gauche plus et gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x04: // Obstacle en face
+            positionObstacle = OBSTACLE_EN_FACE;
+            break;
+        case 0x05: // Obstacles en face et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x06: // Obstacles en face et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x07: // Obstacles en face, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x08: // Obstacle à droite
+            positionObstacle = OBSTACLE_A_DROITE;
+            break;
+        case 0x09: // Obstacles à droite et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0A: // Obstacles à droite et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0B: // Obstacles à droite, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0C: // Obstacles à droite et en face
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0D: // Obstacles à droite, en face et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0E: // Obstacles à droite, en face et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x0F: // Obstacles à droite, en face, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x10: // Obstacle à droite plus
+            positionObstacle = OBSTACLE_A_DROITE_PLUS;
+            break;
+        case 0x11: // Obstacles à droite plus et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x12: // Obstacles à droite plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x13: // Obstacles à droite plus, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x14: // Obstacles à droite plus et en face
+            positionObstacle = PARTOUT;
+            break;
+        case 0x15: // Obstacles à droite plus, en face et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x16: // Obstacles à droite plus, en face et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x17: // Obstacles à droite plus, en face, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x18: // Obstacles à droite et à droite plus
+            positionObstacle = OBSTACLE_A_DROITE_PLUS;
+            break;
+        case 0x19: // Obstacles à droite, à droite plus et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1A: // Obstacles à droite, à droite plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1B: // Obstacles à droite, à droite plus, à gauche plus et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1C: // Obstacles à droite, à droite plus et en face
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1D: // Obstacles à droite, à droite plus, en face et à gauche plus
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1E: // Obstacles à droite, à droite plus, en face et à gauche
+            positionObstacle = PARTOUT;
+            break;
+        case 0x1F: // Obstacles partout
+            positionObstacle = PARTOUT;
+            break;
+        default:
+            positionObstacle = PAS_D_OBSTACLE;
+            break;
+    }
+
+    // Détermination de l'état suivant du robot
+    switch (positionObstacle) {
+        case PAS_D_OBSTACLE:
+            nextStateRobot = STATE_AVANCE;
+            break;
+        case OBSTACLE_A_GAUCHE_PLUS:
+            nextStateRobot = STATE_TOURNE_DROITE_PLUS;
+            break;
+        case OBSTACLE_A_GAUCHE:
+            nextStateRobot = STATE_TOURNE_DROITE;
+            break;
+        case OBSTACLE_EN_FACE:
+            nextStateRobot = STATE_TOURNE_SUR_PLACE_GAUCHE;
+            break;
+        case OBSTACLE_A_DROITE:
+            nextStateRobot = STATE_TOURNE_GAUCHE;
+            break;
+        case OBSTACLE_A_DROITE_PLUS:
+            nextStateRobot = STATE_TOURNE_GAUCHE_PLUS;
+            break;
+        case PARTOUT:
+            nextStateRobot = STATE_RECULE;
+            break;
+        default:
+            nextStateRobot = STATE_ATTENTE;
+            break;
+    }
+
+    // Si l'on n'est pas dans la transition de l'étape en cours
+    if (nextStateRobot!= stateRobot - 1)
         stateRobot = nextStateRobot;
 }
 

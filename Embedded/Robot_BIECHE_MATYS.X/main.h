@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
-#define FREQUENCE_TIMER1 250
+#define FREQUENCE_TIMER1 1000
 #define FREQUENCE_TIMER4 1000
 #define FCY 60000000
 
@@ -27,13 +27,20 @@
 #define STATE_ARRET_EN_COURS 17
 #define STATE_RECULE 18
 #define STATE_RECULE_EN_COURS 19
-#define PAS_D_OBSTACLE 0
-#define OBSTACLE_A_GAUCHE 1
-#define OBSTACLE_A_DROITE 2
-#define OBSTACLE_EN_FACE 3
-#define OBSTACLE_A_DROITE_PLUS 4
-#define OBSTACLE_A_GAUCHE_PLUS 5
-#define PARTOUT 6
+
+#define OBSTACLE_A_GAUCHE_PLUS   1
+#define OBSTACLE_A_GAUCHE        2
+#define OBSTACLE_EN_FACE         3
+#define OBSTACLE_A_DROITE        4
+#define OBSTACLE_A_DROITE_PLUS   5
+#define PAS_D_OBSTACLE           6
+#define PARTOUT                  7
+
+#define INTERFEROMETRE_GAUCHE_PLUS  0x01
+#define INTERFEROMETRE_GAUCHE       0x02
+#define INTERFEROMETRE_CENTRE       0x04
+#define INTERFEROMETRE_DROITE       0x08
+#define INTERFEROMETRE_DROITE_PLUS  0x10
 
 void OperatingSystemLoop(void);
 void SetNextRobotStateInAutomaticMode();
