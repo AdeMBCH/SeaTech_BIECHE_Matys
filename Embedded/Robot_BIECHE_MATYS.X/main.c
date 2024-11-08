@@ -31,6 +31,7 @@ void OperatingSystemLoop(void) {
         case STATE_ATTENTE_EN_COURS:
             if (timestamp > 1000)
                 stateRobot = STATE_AVANCE;
+            
             break;
         case STATE_AVANCE:
             PWMSetSpeedConsigne(vitesse, MOTEUR_DROIT);
@@ -110,18 +111,18 @@ unsigned char nextStateRobot = 0;
 
 void SetNextRobotStateInAutomaticMode() {
     unsigned char positionObstacle = PAS_D_OBSTACLE;
-    unsigned char interferometres = 0;
+    unsigned char telemetres = 0;
 
-    // Lecture des valeurs des interferomètres
+    // Lecture des valeurs des telemetres
     // Remplacez ces lignes par vos fonctions de lecture réelles
-    interferometres = (robotState.distanceTelemetrePlusGauche < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_GAUCHE_PLUS : interferometres;
-    interferometres = (robotState.distanceTelemetreGauche < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_GAUCHE : interferometres;
-    interferometres = (robotState.distanceTelemetreCentre < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_CENTRE : interferometres;
-    interferometres = (robotState.distanceTelemetreDroit < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_DROITE : interferometres;
-    interferometres = (robotState.distanceTelemetrePlusDroit < SEUIL_OBSTACLE)? interferometres | INTERFEROMETRE_DROITE_PLUS : interferometres;
+    telemetres = (robotState.distanceTelemetrePlusGauche < SEUIL_OBSTACLE)? telemetres | TELEMETRE_GAUCHE_PLUS : telemetres;
+    telemetres = (robotState.distanceTelemetreGauche < SEUIL_OBSTACLE)? telemetres | TELEMETRE_GAUCHE : telemetres;
+    telemetres = (robotState.distanceTelemetreCentre < SEUIL_OBSTACLE)? telemetres | TELEMETRE_CENTRE : telemetres;
+    telemetres = (robotState.distanceTelemetreDroit < SEUIL_OBSTACLE)? telemetres | TELEMETRE_DROITE : telemetres;
+    telemetres = (robotState.distanceTelemetrePlusDroit < SEUIL_OBSTACLE)? telemetres | TELEMETRE_DROITE_PLUS : telemetres;
 
     // Détermination de la position des obstacles en fonction des interferomètres
-    switch (interferometres) {
+    switch (telemetres) {
         case 0x00: // Aucun obstacle détecté
             positionObstacle = PAS_D_OBSTACLE;
             break;
@@ -132,37 +133,37 @@ void SetNextRobotStateInAutomaticMode() {
             positionObstacle = OBSTACLE_A_GAUCHE;
             break;
         case 0x03: // Obstacles à gauche plus et gauche
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_GAUCHE;
             break;
         case 0x04: // Obstacle en face
             positionObstacle = OBSTACLE_EN_FACE;
             break;
         case 0x05: // Obstacles en face et à gauche plus
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_EN_FACE;
             break;
         case 0x06: // Obstacles en face et à gauche
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_GAUCHE;
             break;
         case 0x07: // Obstacles en face, à gauche plus et à gauche
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_GAUCHE;
             break;
         case 0x08: // Obstacle à droite
             positionObstacle = OBSTACLE_A_DROITE;
             break;
         case 0x09: // Obstacles à droite et à gauche plus
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_DROITE;
             break;
         case 0x0A: // Obstacles à droite et à gauche
             positionObstacle = PARTOUT;
             break;
         case 0x0B: // Obstacles à droite, à gauche plus et à gauche
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_DROITE;
             break;
         case 0x0C: // Obstacles à droite et en face
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_DROITE;
             break;
         case 0x0D: // Obstacles à droite, en face et à gauche plus
-            positionObstacle = PARTOUT;
+            positionObstacle = OBSTACLE_A_DROITE;
             break;
         case 0x0E: // Obstacles à droite, en face et à gauche
             positionObstacle = PARTOUT;
@@ -174,7 +175,7 @@ void SetNextRobotStateInAutomaticMode() {
             positionObstacle = OBSTACLE_A_DROITE_PLUS;
             break;
         case 0x11: // Obstacles à droite plus et à gauche plus
-            positionObstacle = PARTOUT;
+            positionObstacle = PAS_D_OBSTACLE;
             break;
         case 0x12: // Obstacles à droite plus et à gauche
             positionObstacle = PARTOUT;
