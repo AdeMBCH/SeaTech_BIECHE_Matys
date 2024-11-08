@@ -31,8 +31,9 @@ void InitIO()
     _TRISA9 = 0; // LED Bleue 2
     _TRISA10 = 0; // LED Rouge 2
     _TRISH3 = 0; // LED Verte 2
-
     
+    //****** BOUTON ************************
+    _RH1 = 0 ;
     //****** Moteurs ************************
 
     // Configuration des entrées

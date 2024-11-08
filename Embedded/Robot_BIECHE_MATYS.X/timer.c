@@ -5,7 +5,6 @@
 #include "ADC.h"
 #include "main.h"
 
-unsigned long timestamp;
 
 //Initialisation d?un timer 32 bits
 
@@ -103,9 +102,14 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void) {
     }
 }
 
+unsigned long timestamp=100000;
+
 void __attribute__((interrupt, no_auto_psv)) _T4Interrupt(void) {
     IFS1bits.T4IF = 0;
     //LED_BLEUE_1 = !LED_BLEUE_1;
+    if (BOUTON==1){
+        timestamp=0;
+    }
     timestamp += 1;
     OperatingSystemLoop();
 }
