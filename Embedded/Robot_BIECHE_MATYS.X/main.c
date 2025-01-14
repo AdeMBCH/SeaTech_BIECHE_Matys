@@ -117,7 +117,6 @@ void SetNextRobotStateInAutomaticMode() {
     unsigned char telemetres = 0;
 
     // Lecture des valeurs des telemetres
-    // Remplacez ces lignes par vos fonctions de lecture réelles
     telemetres = (robotState.distanceTelemetrePlusGauche < SEUIL_OBSTACLE)? telemetres | TELEMETRE_GAUCHE_PLUS : telemetres;
     telemetres = (robotState.distanceTelemetreGauche < SEUIL_OBSTACLE)? telemetres | TELEMETRE_GAUCHE : telemetres;
     telemetres = (robotState.distanceTelemetreCentre < SEUIL_OBSTACLE)? telemetres | TELEMETRE_CENTRE : telemetres;
