@@ -41,14 +41,22 @@ namespace RobotInterfaceBIECHE
 
         private void TimerAffichage_Tick(object? sender, EventArgs e)
         {
-            textBoxReception.Text += robot.receivedText;
+            //textBoxReception.Text += robot.receivedText;
+            //robot.receivedText = string.Empty;
+            var byteQueue = robot.byteListReceived;
+            while (byteQueue.Count > 0)
+            {
+                byte b = byteQueue.Dequeue();
+                textBoxReception.Text += $"0x{b.ToString("X2")} ";  // Format 0xhh
+            }
+
             robot.receivedText = string.Empty;
         }
         private void SerialPort1_DataReceived(object? sender, DataReceivedArgs e)
         {
-            // textBoxReception.Text += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
-            robot.receivedText += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
-            for (int i = 0; i < 20; i++)
+            //textBoxReception.Text += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
+            //robot.receivedText += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
+            for (int i = 0; i < e.Data.Length; i++)
             {
                 robot.byteListReceived.Enqueue(e.Data[i]);
             }

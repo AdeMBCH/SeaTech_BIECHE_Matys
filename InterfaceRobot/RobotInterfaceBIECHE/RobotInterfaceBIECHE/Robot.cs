@@ -6,9 +6,9 @@ public class Robot
     public float distanceTelemetreDroit;
     public float distanceTelemetreCentre;
     public float distanceTelemetreGauche;
-    public Queue<byte> byteListReceived;
+    public Queue<byte> byteListReceived = new Queue<byte>();
     public Robot()
     {
-        Queue<byte> byteListReceived = new Queue<byte>();
+        
     }
 }
