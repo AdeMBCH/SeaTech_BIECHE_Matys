@@ -11,16 +11,14 @@ int cbRx1Tail;
 unsigned char cbRx1Buffer[CBRX1_BUFFER_SIZE];
 
 void CB_RX1_Add(unsigned char value){
-    cbRx1Buffer[cbRx1Head] = value;
-    cbRx1Head++;
+    cbRx1Buffer[cbRx1Head++] = value;
     if (cbRx1Head >= CBRX1_BUFFER_SIZE) {
         cbRx1Head = 0;
     }
 }
 
 unsigned char CB_RX1_Get(void){
-    unsigned char value = cbRx1Buffer[cbRx1Tail];
-    cbRx1Tail++;
+    unsigned char value = cbRx1Buffer[cbRx1Tail++];
     if (cbRx1Tail >= CBRX1_BUFFER_SIZE) {
         cbRx1Tail = 0;
     }
@@ -61,7 +59,5 @@ int CB_RX1_GetDataSize(void){
 int CB_RX1_GetRemainingSize(void)
 {
 //return size of remaining size in circular buffer
-int remainingSize;
-remainingSize = (CBRX1_BUFFER_SIZE - CB_RX1_GetDataSize());
-return remainingSize;
+return CBRX1_BUFFER_SIZE - CB_RX1_GetDataSize();
 }
