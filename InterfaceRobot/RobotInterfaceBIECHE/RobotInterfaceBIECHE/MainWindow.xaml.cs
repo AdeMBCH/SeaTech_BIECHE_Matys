@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ExtendedSerialPort_NS;
 using System.Windows.Threading;
+using System;
 
 
 namespace RobotInterfaceBIECHE
@@ -118,6 +119,23 @@ namespace RobotInterfaceBIECHE
             serialPort1.Write(byteList, 0, byteList.Length);
 
         }
+
+        private byte CalculateChecksum(int msgFunction, int msgPayloadLength, byte[] msgPayload)
+        {
+            byte checksum = 0;
+            checksum ^= 0xFE;
+            checksum ^= (byte)(msgFunction >> 8);
+            checksum ^= (byte)(msgFunction >> 0); // On le fait par symétrie de construction
+            checksum ^= (byte)(msgPayloadLength >> 8);
+            checksum ^= (byte)(msgPayloadLength >> 0);
+
+            foreach (byte bt in msgPayload)
+            {
+                checksum ^= bt;
+            }
+            return checksum;
+        }
+
     }
 }
 
