@@ -8,6 +8,7 @@
 #include "ADC.h"
 #include "robot.h"
 #include "main.h"
+#include "UART.h"
 
     /****************************************************************************************************/
     // Machine à Etat
@@ -284,6 +285,8 @@ int main(void) {
     InitPWM();
     //PWMSetSpeed(0,MOTEUR_DROIT);
     
+    InitUART();
+    
     
     
     
@@ -306,6 +309,7 @@ int main(void) {
     // Boucle Principale
     /****************************************************************************************************/
     while (1) {
+        
         /*LED_BLANCHE_1 = !LED_BLANCHE_1;
        LED_BLEUE_1 = !LED_BLEUE_1;*/
         
@@ -349,5 +353,8 @@ int main(void) {
             else
                 LED_BLANCHE_1 = 0;            
         }
+        
+        SendMessageDirect((unsigned char*) "Bonjour", 7);
+        __delay32(40000000);
     }
 }
