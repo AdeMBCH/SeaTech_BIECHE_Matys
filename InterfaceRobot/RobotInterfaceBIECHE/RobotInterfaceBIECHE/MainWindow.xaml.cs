@@ -209,7 +209,11 @@ namespace RobotInterfaceBIECHE
                     break;
                 case StateReception.PayloadLengthLSB:
                     msgDecodedPayloadLength = c << 0;
-                    if (msgDecodedPayloadLength > 0)
+                    if(msgDecodedPayloadLength>1024)
+                    {
+                        rcvState = StateReception.Waiting;
+                    }
+                    else if (msgDecodedPayloadLength > 0)
                     {
                         msgDecodedPayload = new byte[msgDecodedPayloadLength];
                         msgDecodedPayloadIndex = 0;
