@@ -48,7 +48,7 @@ namespace RobotInterfaceBIECHE
             while (byteQueue.Count > 0)
             {
                 byte b = byteQueue.Dequeue();
-                //textBoxReception.Text += $"0x{b.ToString("X2")} ";  // Format 0xhh
+                textBoxReception.Text += $"0x{b.ToString("X2")} " ;  // Format 0xhh
                 DecodeMessage(b);
             }
 
@@ -69,9 +69,14 @@ namespace RobotInterfaceBIECHE
         private void SendMessage()
         {
 
-            serialPort1.WriteLine(textBoxEmission.Text);
+            //serialPort1.WriteLine(textBoxEmission.Text);
 
             //textBoxReception.Text += "Reçu : " + toSend + "\n";
+
+            byte[] msgPayload = Encoding.ASCII.GetBytes(textBoxEmission.Text);
+            int msgPayloadLength = msgPayload.Length;
+            int msgFunction = 0x0080;
+            UartEncodeAndSendMessage(msgFunction, msgPayloadLength, msgPayload);
 
             textBoxEmission.Clear();
         }
@@ -118,7 +123,7 @@ namespace RobotInterfaceBIECHE
             }
 
             //serialPort1.Write(byteList, 0, byteList.Length);
-            string messageStr = "JECRIS DES TRUCS LALALA";
+            string messageStr = "Bonjour";
             byte[] msgPayload = Encoding.ASCII.GetBytes(messageStr);
             int msgPayloadLength = msgPayload.Length;
             int msgFunction = 0x0080;
@@ -168,7 +173,7 @@ namespace RobotInterfaceBIECHE
             Waiting,
             FunctionMSB,
             FunctionLSB,
-            PlayloadLengthMSB,
+            PayloadLengthMSB,
             PayloadLengthLSB,
             Payload,
             CheckSum
@@ -196,9 +201,9 @@ namespace RobotInterfaceBIECHE
                     break;
                 case StateReception.FunctionLSB:
                     msgDecodedFunction = c << 0;
-                    rcvState = StateReception.PlayloadLengthMSB;
+                    rcvState = StateReception.PayloadLengthMSB;
                     break;
-                case StateReception.PlayloadLengthMSB:
+                case StateReception.PayloadLengthMSB:
                     msgDecodedPayloadLength = c << 8;
                     rcvState = StateReception.PayloadLengthLSB;
                     break;
@@ -223,18 +228,20 @@ namespace RobotInterfaceBIECHE
                     }
                     break;
                 case StateReception.CheckSum:
-                    byte receivedChecksum = c;
+                    byte receivedChecksum = c ;
                     byte calculatedChecksum = CalculateChecksum(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
 
                     if (receivedChecksum == calculatedChecksum)
                     {
-                        textBoxReception.Text += "Le Message est valide \n";
-                        textBoxReception.Text += "Fonction : " + msgDecodedFunction + " Taille Payload: " + msgDecodedPayloadLength + "\n";
+                        textBoxReception.Text += "\n";
+                        textBoxReception.Text += "Message valide \n";
+                        textBoxReception.Text += "Fonction : " + msgDecodedFunction + "\n";
+                        textBoxReception.Text += "Taille Payload: " + msgDecodedPayloadLength + "\n";
                         textBoxReception.Text += "Payload : " + Encoding.ASCII.GetString(msgDecodedPayload) + "\n";
                     }
                     else
                     {
-                        textBoxReception.Text += "Erreur ! Le Checksum n'est pas le bon.\n";
+                        textBoxReception.Text += "Erreur Checksum \n";
                     }
                     rcvState = StateReception.Waiting;
                     break;
