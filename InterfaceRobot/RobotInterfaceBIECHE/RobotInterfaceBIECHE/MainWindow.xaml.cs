@@ -33,7 +33,7 @@ namespace RobotInterfaceBIECHE
             timerAffichage.Tick += TimerAffichage_Tick;
             timerAffichage.Start();
 
-            serialPort1 = new ExtendedSerialPort("COM7", 115200, Parity.None, 8, StopBits.One);
+            serialPort1 = new ExtendedSerialPort("COM3", 115200, Parity.None, 8, StopBits.One);
             serialPort1.DataReceived += SerialPort1_DataReceived;
             serialPort1.Open();
             InitializeComponent();
@@ -116,8 +116,12 @@ namespace RobotInterfaceBIECHE
                 byteList[i] = (byte)(2*i);
             }
 
-            serialPort1.Write(byteList, 0, byteList.Length);
-
+            //serialPort1.Write(byteList, 0, byteList.Length);
+            string messageStr = "Bonjour";
+            byte[] msgPayload = Encoding.ASCII.GetBytes(messageStr);
+            int msgPayloadLength = msgPayload.Length;
+            int msgFunction = 0x0080;
+            UartEncodeAndSendMessage(msgFunction, msgPayloadLength, msgPayload);
         }
 
         private byte CalculateChecksum(int msgFunction, int msgPayloadLength, byte[] msgPayload)
@@ -136,6 +140,27 @@ namespace RobotInterfaceBIECHE
             return checksum;
         }
 
+        void UartEncodeAndSendMessage(int msgFunction,int msgPayloadLength, byte[] msgPayload)
+        {
+            byte[] message = new byte[6 + msgPayloadLength];
+            int pos = 0;
+            message[pos++] = 0xFE;
+            message[pos++] = (byte)(msgFunction >> 8);
+            message[pos++] = (byte)(msgFunction >> 0);
+            message[pos++] = (byte)(msgPayloadLength >> 8);
+            message[pos++] = (byte)(msgPayloadLength >> 0);
+            for (int i = 0; i < msgPayloadLength; i++)
+            {
+                message[pos++] = msgPayload[i];
+            }
+            byte checksum = CalculateChecksum(msgFunction, msgPayloadLength, msgPayload);
+            message[pos++] = checksum;
+            serialPort1.Write(message, 0, pos);
+            // Attention il faudrait ajouter une protection avant et après le payloadlength.
+            // En effet, imaginons quel'on veuille envoyer 650000 caractères
+            // mais que finalement on veuille plus
+            // il faudrait pouvoir arrêter le processus avant l'envoie sinon on va attendre l'envoie des 650000 caractères
+        }
     }
 }
 
