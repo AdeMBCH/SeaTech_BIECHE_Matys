@@ -143,6 +143,7 @@ namespace RobotInterfaceBIECHE
             {
                 checksum ^= bt;
             }
+
             return checksum;
         }
 

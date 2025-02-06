@@ -8,28 +8,34 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="30"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Emission" Background="#FFDDDDDD" BorderBrush="Black" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <GroupBox Header="Emission" Background="#FFDDDDDD" BorderBrush="Black" Grid.Row="0" Grid.Column="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="5">
             <TextBox x:Name="textBoxEmission" TextWrapping="Wrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" AcceptsReturn="True" KeyUp="textBoxEmission_KeyUp"/>
         </GroupBox>
-        <GroupBox Header="Réception" Background="#FFDDDDDD" BorderBrush="Black" Grid.Column="3" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <GroupBox Header="Réception" Background="#FFDDDDDD" BorderBrush="Black" Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="5">
             <TextBox x:Name="textBoxReception" TextWrapping="Wrap" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" AcceptsReturn="True" IsReadOnly="True"/>
         </GroupBox>
-        <Button x:Name="buttonEnvoyer" Grid.Column="1" Content="Envoyer" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="30" Width="100" Click="buttonEnvoyer_Click"/>
-        <Button x:Name="buttonClear" Grid.Column="3" Content="Clear" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="30" Width="100" Click="buttonClear_Click"/>
-        <Button x:Name="buttonTest" Grid.Column="2" Content="Test" HorizontalAlignment="Center" Margin="0,5,0,5" Grid.Row="3" VerticalAlignment="Center" Click="buttonTest_Click"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Button x:Name="buttonEnvoyer" Content="Envoyer" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="10,5,10,5" Click="buttonEnvoyer_Click" Margin="5"/>
+            <Button x:Name="buttonClear" Content="Clear" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="10,5,10,5" Click="buttonClear_Click" Margin="5"/>
+            <Button x:Name="buttonTest" Content="Test" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Top" Click="buttonTest_Click" Padding="10,5,10,5" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2">
+            <GroupBox Header="Leds" Margin="5" BorderBrush="#FF000A0F">
+                <CheckBox Content="Led 1" HorizontalAlignment="Left"/>
+            </GroupBox>
+            <GroupBox Header="Télémètres IR" Margin="5" BorderBrush="#FF000A0F">
+                <TextBlock TextWrapping="Wrap"><Run Language="fr-fr"/><LineBreak/><Run Language="fr-fr" Text="IR Gauche :"/><LineBreak/><Run Language="fr-fr" Text="IR Centre :"/><LineBreak/><Run Language="fr-fr" Text="IR Droit :"/></TextBlock>
+            </GroupBox>
+            <GroupBox Header="Moteurs" Margin="5" BorderBrush="#FF000A0F"/>
+        </StackPanel>
 
     </Grid>
 </Window>
