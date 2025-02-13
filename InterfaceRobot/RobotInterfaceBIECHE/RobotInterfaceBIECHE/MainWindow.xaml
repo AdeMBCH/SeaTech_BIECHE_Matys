@@ -29,12 +29,25 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2">
             <GroupBox Header="Leds" Margin="5" BorderBrush="#FF000A0F">
-                <CheckBox Content="Led 1" HorizontalAlignment="Left"/>
+                <StackPanel>
+                    <CheckBox x:Name="checkboxLed1" Content="Led 1" HorizontalAlignment="Left"/>
+                    <CheckBox x:Name="checkboxLed2" Content="Led 2" HorizontalAlignment="Left"/>
+                    <CheckBox x:Name="checkboxLed3" Content="Led 3" HorizontalAlignment="Left"/>
+                </StackPanel>
             </GroupBox>
             <GroupBox Header="Télémètres IR" Margin="5" BorderBrush="#FF000A0F">
-                <TextBlock TextWrapping="Wrap"><Run Language="fr-fr"/><LineBreak/><Run Language="fr-fr" Text="IR Gauche :"/><LineBreak/><Run Language="fr-fr" Text="IR Centre :"/><LineBreak/><Run Language="fr-fr" Text="IR Droit :"/></TextBlock>
+            <StackPanel>
+                <TextBlock x:Name="textBlockIrGauche" TextWrapping="Wrap"><Run Text="IR Gauche :"/></TextBlock>
+                <TextBlock x:Name="textBlockIrCentre" TextWrapping="Wrap"><Run Text="IR Centre :"/></TextBlock>
+                <TextBlock x:Name="textBlockIrDroit" TextWrapping="Wrap"><Run Text="IR Droit :"/></TextBlock>
+            </StackPanel>
             </GroupBox>
-            <GroupBox Header="Moteurs" Margin="5" BorderBrush="#FF000A0F"/>
+            <GroupBox Header="Moteurs" Margin="5" BorderBrush="#FF000A0F">
+                <StackPanel>
+                    <TextBlock x:Name="textBlockMoteurGauche" TextWrapping="Wrap"><Run Text="Vitesse Gauche :"/></TextBlock>
+                <TextBlock x:Name="textBlockMoteurDroit" TextWrapping="Wrap"><Run Text="Vitesse Droit :"/></TextBlock>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
 
     </Grid>

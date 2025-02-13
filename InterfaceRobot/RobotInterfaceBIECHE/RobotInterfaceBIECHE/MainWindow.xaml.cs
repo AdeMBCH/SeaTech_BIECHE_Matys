@@ -1,24 +1,15 @@
-﻿using System.IO.Ports;
+﻿using System;
+using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ExtendedSerialPort_NS;
 using System.Windows.Threading;
-using System;
-
+using ExtendedSerialPort_NS;
 
 namespace RobotInterfaceBIECHE
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         ExtendedSerialPort serialPort1;
@@ -27,77 +18,51 @@ namespace RobotInterfaceBIECHE
 
         public MainWindow()
         {
+            InitializeComponent();
 
             timerAffichage = new DispatcherTimer();
             timerAffichage.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timerAffichage.Tick += TimerAffichage_Tick;
             timerAffichage.Start();
 
-            serialPort1 = new ExtendedSerialPort("COM3", 115200, Parity.None, 8, StopBits.One);
+            serialPort1 = new ExtendedSerialPort("COM5", 115200, Parity.None, 8, StopBits.One);
             serialPort1.DataReceived += SerialPort1_DataReceived;
             serialPort1.Open();
-            InitializeComponent();
-
         }
 
         private void TimerAffichage_Tick(object? sender, EventArgs e)
         {
-            //textBoxReception.Text += robot.receivedText;
-            //robot.receivedText = string.Empty;
             var byteQueue = robot.byteListReceived;
             while (byteQueue.Count > 0)
             {
                 byte b = byteQueue.Dequeue();
-                textBoxReception.Text += $"0x{b.ToString("X2")} " ;  // Format 0xhh
+                textBoxReception.Text += $"0x{b.ToString("X2")} ";  // Format 0xhh
                 DecodeMessage(b);
             }
 
             robot.receivedText = string.Empty;
         }
+
         private void SerialPort1_DataReceived(object? sender, DataReceivedArgs e)
         {
-            //textBoxReception.Text += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
-            //robot.receivedText += Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
             for (int i = 0; i < e.Data.Length; i++)
             {
                 robot.byteListReceived.Enqueue(e.Data[i]);
             }
         }
 
-        bool isRoyalBlue = false;
-
         private void SendMessage()
         {
-
-            //serialPort1.WriteLine(textBoxEmission.Text);
-
-            //textBoxReception.Text += "Reçu : " + toSend + "\n";
-
             byte[] msgPayload = Encoding.ASCII.GetBytes(textBoxEmission.Text);
             int msgPayloadLength = msgPayload.Length;
-            int msgFunction = 0x0080;
+            int msgFunction = (int)CommandId.Text;
             UartEncodeAndSendMessage(msgFunction, msgPayloadLength, msgPayload);
 
             textBoxEmission.Clear();
         }
 
-        private void ChangeButtonColor()
+        private void buttonEnvoyer_Click(object sender, RoutedEventArgs e)
         {
-            if (isRoyalBlue)
-            {
-                buttonEnvoyer.Background = Brushes.Beige;
-                isRoyalBlue = false;
-            }
-            else
-            {
-                buttonEnvoyer.Background = Brushes.RoyalBlue;
-                isRoyalBlue = true;
-            }
-        }
-
-        private void buttonEnvoyer_Click(object sender, RoutedEventArgs e) // Cliquer plusieurs fois ne fait rien, le bouton ne reviens pas à la couleur de base par exemple.
-        {
-            //ChangeButtonColor();
             SendMessage();
         }
 
@@ -116,18 +81,42 @@ namespace RobotInterfaceBIECHE
 
         private void buttonTest_Click(object sender, RoutedEventArgs e)
         {
-            byte[] byteList = new byte[20];
-            for (int i = 0; i < 20; i++)
-            {
-                byteList[i] = (byte)(2*i);
-            }
+            SendTextMessage("Bonjour");
+            SendLedMessage(1, 1); // LED 1 Allumée
+            SendIrDistanceMessage(10, 20, 30);
+            SendMotorSpeedMessage(50, 75);
+        }
 
-            //serialPort1.Write(byteList, 0, byteList.Length);
-            string messageStr = "Bonjour";
-            byte[] msgPayload = Encoding.ASCII.GetBytes(messageStr);
+        private void SendTextMessage(string text)
+        {
+            byte[] msgPayload = Encoding.ASCII.GetBytes(text);
             int msgPayloadLength = msgPayload.Length;
-            int msgFunction = 0x0080;
-            UartEncodeAndSendMessage(msgFunction, msgPayloadLength, msgPayload);
+            int msgFunction = (int)CommandId.Text;
+            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
+        }
+
+        private void SendLedMessage(byte ledNumber, byte ledState)
+        {
+            byte[] msgPayload = new byte[] { ledNumber, ledState };
+            int msgPayloadLength = msgPayload.Length;
+            int msgFunction = (int)CommandId.Led;
+            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
+        }
+
+        private void SendIrDistanceMessage(byte leftDistance, byte centerDistance, byte rightDistance)
+        {
+            byte[] msgPayload = new byte[] { leftDistance, centerDistance, rightDistance };
+            int msgPayloadLength = msgPayload.Length;
+            int msgFunction = (int)CommandId.IrDistance;
+            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
+        }
+
+        private void SendMotorSpeedMessage(byte leftSpeed, byte rightSpeed)
+        {
+            byte[] msgPayload = new byte[] { leftSpeed, rightSpeed };
+            int msgPayloadLength = msgPayload.Length;
+            int msgFunction = (int)CommandId.MoteurV;
+            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
         }
 
         private byte CalculateChecksum(int msgFunction, int msgPayloadLength, byte[] msgPayload)
@@ -163,11 +152,75 @@ namespace RobotInterfaceBIECHE
             byte checksum = CalculateChecksum(msgFunction, msgPayloadLength, msgPayload);
             message[pos++] = checksum;
             serialPort1.Write(message, 0, pos);
-            // Attention il faudrait ajouter une protection avant et après le payloadlength.
-            // En effet, imaginons quel'on veuille envoyer 650000 caractères
-            // mais que finalement on veuille plus
-            // il faudrait pouvoir arrêter le processus avant l'envoie sinon on va attendre l'envoie des 650000 caractères
         }
+
+        public enum CommandId
+        {
+            Text = 0x0080,
+            Led = 0x0020,
+            IrDistance = 0x0030,
+            MoteurV = 0x0040
+        }
+
+        void ProcessDecodedMessage(int msgFunction, int msgPayloadLength, byte[] msgPayload)
+        {
+            switch (msgFunction)
+            {
+                case (int)CommandId.Text:
+                    string receivedText = Encoding.ASCII.GetString(msgPayload);
+                    textBoxReception.Text = receivedText;
+                    break;
+
+                case (int)CommandId.Led:
+                    if (msgPayloadLength == 2)
+                    {
+                        byte ledNumber = msgPayload[0];
+                        byte ledState = msgPayload[1];
+
+                        if (ledNumber == 1)
+                        {
+                            checkboxLed1.IsChecked = (ledState == 1);
+                        }
+                        else if (ledNumber == 2)
+                        {
+                            checkboxLed2.IsChecked = (ledState == 1);
+                        }
+                        else if (ledNumber == 3)
+                        {
+                            checkboxLed3.IsChecked = (ledState == 1);
+                        }
+                    }
+                    break;
+
+                case (int)CommandId.IrDistance:
+                    if (msgPayloadLength == 3)
+                    {
+                        byte leftDistance = msgPayload[0];
+                        byte centerDistance = msgPayload[1];
+                        byte rightDistance = msgPayload[2];
+
+                        textBlockIrGauche.Text = "IR Gauche : " + leftDistance.ToString();
+                        textBlockIrCentre.Text = "IR Centre : " + centerDistance.ToString();
+                        textBlockIrDroit.Text = "IR Droit : " + rightDistance.ToString();
+                    }
+                    break;
+
+                case (int)CommandId.MoteurV:
+                    if (msgPayloadLength == 2)
+                    {
+                        byte leftSpeed = msgPayload[0];
+                        byte rightSpeed = msgPayload[1];
+
+                        textBlockMoteurGauche.Text = "Vitesse Gauche : " + leftSpeed.ToString();
+                        textBlockMoteurDroit.Text = "Vitesse Droit : " + rightSpeed.ToString();
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
 
         public enum StateReception
         {
@@ -180,7 +233,7 @@ namespace RobotInterfaceBIECHE
             CheckSum
         }
 
-        StateReception rcvState =StateReception.Waiting;
+        StateReception rcvState = StateReception.Waiting;
         int msgDecodedFunction = 0;
         int msgDecodedPayloadLength = 0;
         byte[] msgDecodedPayload;
@@ -191,26 +244,26 @@ namespace RobotInterfaceBIECHE
             switch (rcvState)
             {
                 case StateReception.Waiting:
-                    if (c== 0xFE)
+                    if (c == 0xFE)
                     {
                         rcvState = StateReception.FunctionMSB;
                     }
                     break;
                 case StateReception.FunctionMSB:
-                    msgDecodedFunction = c << 8;
+                    msgDecodedFunction = (c << 8) + msgDecodedFunction;
                     rcvState = StateReception.FunctionLSB;
                     break;
                 case StateReception.FunctionLSB:
-                    msgDecodedFunction = c << 0;
+                    msgDecodedFunction = (c << 0) + msgDecodedFunction;
                     rcvState = StateReception.PayloadLengthMSB;
                     break;
                 case StateReception.PayloadLengthMSB:
-                    msgDecodedPayloadLength = c << 8;
+                    msgDecodedPayloadLength = (c << 8) + msgDecodedPayloadLength;
                     rcvState = StateReception.PayloadLengthLSB;
                     break;
                 case StateReception.PayloadLengthLSB:
-                    msgDecodedPayloadLength = c << 0;
-                    if(msgDecodedPayloadLength>1024)
+                    msgDecodedPayloadLength = (c << 0) + msgDecodedPayloadLength;
+                    if (msgDecodedPayloadLength > 1024)
                     {
                         rcvState = StateReception.Waiting;
                     }
@@ -233,7 +286,7 @@ namespace RobotInterfaceBIECHE
                     }
                     break;
                 case StateReception.CheckSum:
-                    byte receivedChecksum = c ;
+                    byte receivedChecksum = c;
                     byte calculatedChecksum = CalculateChecksum(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload);
 
                     if (receivedChecksum == calculatedChecksum)
@@ -243,6 +296,8 @@ namespace RobotInterfaceBIECHE
                         textBoxReception.Text += "Fonction : " + msgDecodedFunction + "\n";
                         textBoxReception.Text += "Taille Payload: " + msgDecodedPayloadLength + "\n";
                         textBoxReception.Text += "Payload : " + Encoding.ASCII.GetString(msgDecodedPayload) + "\n";
+
+                        UartEncodeAndSendMessage(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload); 
                     }
                     else
                     {
@@ -257,6 +312,3 @@ namespace RobotInterfaceBIECHE
         }
     }
 }
-
-
-
