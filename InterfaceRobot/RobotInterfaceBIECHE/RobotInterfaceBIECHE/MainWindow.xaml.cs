@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ExtendedSerialPort_NS;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RobotInterfaceBIECHE
 {
@@ -36,7 +37,7 @@ namespace RobotInterfaceBIECHE
             while (byteQueue.Count > 0)
             {
                 byte b = byteQueue.Dequeue();
-                textBoxReception.Text += $"0x{b.ToString("X2")} ";  // Format 0xhh
+                //textBoxReception.Text += $"0x{b.ToString("X2")} ";  // Format 0xhh
                 DecodeMessage(b);
             }
 
@@ -81,42 +82,23 @@ namespace RobotInterfaceBIECHE
 
         private void buttonTest_Click(object sender, RoutedEventArgs e)
         {
-            SendTextMessage("Bonjour");
-            SendLedMessage(1, 1); // LED 1 Allumée
-            SendIrDistanceMessage(10, 20, 30);
-            SendMotorSpeedMessage(50, 75);
-        }
-
-        private void SendTextMessage(string text)
-        {
-            byte[] msgPayload = Encoding.ASCII.GetBytes(text);
+            string s = "Bonjour";
+            byte[] msgPayload = Encoding.ASCII.GetBytes(s);
             int msgPayloadLength = msgPayload.Length;
             int msgFunction = (int)CommandId.Text;
-            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
-        }
+            UartEncodeAndSendMessage(msgFunction, msgPayloadLength, msgPayload);
+            //SendTextMessage("Bonjour");
 
-        private void SendLedMessage(byte ledNumber, byte ledState)
-        {
-            byte[] msgPayload = new byte[] { ledNumber, ledState };
-            int msgPayloadLength = msgPayload.Length;
-            int msgFunction = (int)CommandId.Led;
-            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
-        }
 
-        private void SendIrDistanceMessage(byte leftDistance, byte centerDistance, byte rightDistance)
-        {
-            byte[] msgPayload = new byte[] { leftDistance, centerDistance, rightDistance };
-            int msgPayloadLength = msgPayload.Length;
-            int msgFunction = (int)CommandId.IrDistance;
-            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
-        }
+            UartEncodeAndSendMessage((int)CommandId.IrDistance, 3, new byte[] {45,56,85});
 
-        private void SendMotorSpeedMessage(byte leftSpeed, byte rightSpeed)
-        {
-            byte[] msgPayload = new byte[] { leftSpeed, rightSpeed };
-            int msgPayloadLength = msgPayload.Length;
-            int msgFunction = (int)CommandId.MoteurV;
-            ProcessDecodedMessage(msgFunction, msgPayloadLength, msgPayload);
+            UartEncodeAndSendMessage((int)CommandId.Led, 2, new byte[] { 3, 1 }); //LED
+
+            UartEncodeAndSendMessage((int)CommandId.MoteurV, 2, new byte[] { 26, 5 }); // Moteur
+
+            //SendLedMessage(1, 1); // LED 1 Allumée
+            //SendIrDistanceMessage(10, 20, 30);
+            //SendMotorSpeedMessage(15, 45);
         }
 
         private byte CalculateChecksum(int msgFunction, int msgPayloadLength, byte[] msgPayload)
@@ -199,9 +181,9 @@ namespace RobotInterfaceBIECHE
                         byte centerDistance = msgPayload[1];
                         byte rightDistance = msgPayload[2];
 
-                        textBlockIrGauche.Text = "IR Gauche : " + leftDistance.ToString();
-                        textBlockIrCentre.Text = "IR Centre : " + centerDistance.ToString();
-                        textBlockIrDroit.Text = "IR Droit : " + rightDistance.ToString();
+                        textBlockIrGauche.Text = "IR Gauche : " + leftDistance.ToString() + "cm";
+                        textBlockIrCentre.Text = "IR Centre : " + centerDistance.ToString() + "cm";
+                        textBlockIrDroit.Text = "IR Droit : " + rightDistance.ToString() + "cm";
                     }
                     break;
 
@@ -211,8 +193,8 @@ namespace RobotInterfaceBIECHE
                         byte leftSpeed = msgPayload[0];
                         byte rightSpeed = msgPayload[1];
 
-                        textBlockMoteurGauche.Text = "Vitesse Gauche : " + leftSpeed.ToString();
-                        textBlockMoteurDroit.Text = "Vitesse Droit : " + rightSpeed.ToString();
+                        textBlockMoteurGauche.Text = "Vitesse Gauche : " + leftSpeed.ToString() + "%";
+                        textBlockMoteurDroit.Text = "Vitesse Droit : " + rightSpeed.ToString()+ "%";
                     }
                     break;
 
@@ -250,19 +232,19 @@ namespace RobotInterfaceBIECHE
                     }
                     break;
                 case StateReception.FunctionMSB:
-                    msgDecodedFunction = (c << 8) + msgDecodedFunction;
+                    msgDecodedFunction = (c << 8);
                     rcvState = StateReception.FunctionLSB;
                     break;
                 case StateReception.FunctionLSB:
-                    msgDecodedFunction = (c << 0) + msgDecodedFunction;
+                    msgDecodedFunction |= (c << 0) ;
                     rcvState = StateReception.PayloadLengthMSB;
                     break;
                 case StateReception.PayloadLengthMSB:
-                    msgDecodedPayloadLength = (c << 8) + msgDecodedPayloadLength;
+                    msgDecodedPayloadLength = (c << 8) ;
                     rcvState = StateReception.PayloadLengthLSB;
                     break;
                 case StateReception.PayloadLengthLSB:
-                    msgDecodedPayloadLength = (c << 0) + msgDecodedPayloadLength;
+                    msgDecodedPayloadLength |= (c << 0) ;
                     if (msgDecodedPayloadLength > 1024)
                     {
                         rcvState = StateReception.Waiting;
@@ -297,7 +279,7 @@ namespace RobotInterfaceBIECHE
                         textBoxReception.Text += "Taille Payload: " + msgDecodedPayloadLength + "\n";
                         textBoxReception.Text += "Payload : " + Encoding.ASCII.GetString(msgDecodedPayload) + "\n";
 
-                        UartEncodeAndSendMessage(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload); 
+                        ProcessDecodedMessage(msgDecodedFunction, msgDecodedPayloadLength, msgDecodedPayload); 
                     }
                     else
                     {

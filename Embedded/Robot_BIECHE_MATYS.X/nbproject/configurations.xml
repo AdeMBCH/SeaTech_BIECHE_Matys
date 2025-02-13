@@ -15,6 +15,7 @@
       <itemPath>UART.h</itemPath>
       <itemPath>CB_TX1.h</itemPath>
       <itemPath>CB_RX1.h</itemPath>
+      <itemPath>UART_Protocol.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -39,6 +40,7 @@
       <itemPath>UART.c</itemPath>
       <itemPath>CB_TX1.c</itemPath>
       <itemPath>CB_RX1.c</itemPath>
+      <itemPath>UART_Protocol.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -513,6 +515,8 @@
         <property key="periphUSARTF1Exists" value="false"/>
         <property key="peripheralEnableSupportDisabled" value="true"/>
         <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmerToGoFilePath"
+                  value="C:/Github/SeaTech_BIECHE_Matys/Embedded/Robot_BIECHE_MATYS.X/debug/default/Robot_BIECHE_MATYS_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.ledbrightness" value="5"/>

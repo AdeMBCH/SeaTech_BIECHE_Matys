@@ -12,6 +12,7 @@
 #include "CB_TX1.h"
 #include "CB_RX1.h"
 #include <libpic30.h>
+#include "UART_Protocol.h"
 
     /****************************************************************************************************/
     // Machine à Etat
@@ -333,7 +334,7 @@ int main(void) {
             robotState.distanceTelemetrePlusDroit = 34 / volts - 5;
             volts = ((float) result [0])* 3.3 / 4096;
             robotState.distanceTelemetrePlusGauche = 34 / volts - 5;
-
+            
             
             if(robotState.distanceTelemetreGauche < SEUIL_OBSTACLE)
                 LED_BLEUE_1 = 1;
@@ -357,13 +358,23 @@ int main(void) {
                 LED_BLANCHE_1 = 0;            
         }
         
-        int i;
-        for(i=0; i< CB_RX1_GetDataSize(); i++){
-            unsigned char c = CB_RX1_Get();
-            SendMessage(&c,1);
-        }
-        __delay32(100000);
+        //int i;
+        //for(i=0; i< CB_RX1_GetDataSize(); i++){
+        //    unsigned char c = CB_RX1_Get();
+            
+        //    SendMessage(&c,1);
+        //}
+        
+        
+        
+        //unsigned char payload[] = {'B', 'o', 'n', 'j', 'o', 'u', 'r'};
 
+        //__delay32(100000);
+        
+        SendIrDistanceMessage(robotState.distanceTelemetreGauche,robotState.distanceTelemetreCentre,robotState.distanceTelemetreDroit);
+        SendMotorSpeedMessage(robotState.vitesseGaucheConsigne,robotState.vitesseDroiteConsigne);
+        __delay32(40000000);
+        
         
         
         //SendMessage((unsigned char*) "Test",4);
